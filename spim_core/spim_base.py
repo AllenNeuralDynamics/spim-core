@@ -112,11 +112,12 @@ class Spim:
             log_handler.close()
             logger.removeHandler(log_handler)
 
-    def run(self, overwrite: bool = False):
+    def run(self, overwrite: bool = False, spim_name='micr'):
         """Collect data according to config; populate dest folder with data.
 
         :param overwrite: bool indicating if we want to overwrite any existing
             data if the output folder already exists. False by default.
+            spim_name: name of spim microscope, dictates imaging data folder name.
         """
         self.cfg.sanity_check()
         # Define img & derivative storage folders if external folder is specified.
@@ -126,7 +127,7 @@ class Spim:
         date_time_string = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         if self.cfg.local_storage_dir is not None:
             self.cache_storage_dir = \
-                self.cfg.local_storage_dir / Path(self.cfg.subject_id + "-ID_" + date_time_string)
+                self.cfg.local_storage_dir / Path(self.cfg.subject_id + "_" + date_time_string)
             if self.cache_storage_dir.exists() and not overwrite:
                 self.log.error(f"Local folder {self.cache_storage_dir.absolute()} exists. "
                                "This function must be rerun with overwrite=True.")
@@ -136,12 +137,12 @@ class Spim:
         output_folder = None
         if self.cfg.ext_storage_dir is not None:
             output_folder = \
-                self.cfg.ext_storage_dir / Path(self.cfg.subject_id + "-ID_" + date_time_string)
+                self.cfg.ext_storage_dir / Path(self.cfg.subject_id + "_" + date_time_string)
             if output_folder.exists() and not overwrite:
                 self.log.error(f"Output folder {output_folder.absolute()} exists. "
                                "This function must be rerun with overwrite=True.")
                 raise
-            self.img_storage_dir = output_folder / Path("micr/")
+            self.img_storage_dir = output_folder / Path(f"{spim_name}/")
             self.deriv_storage_dir = output_folder / Path("derivatives/")
             self.log.info(f"Creating dataset folder in: {output_folder.absolute()}")
             self.img_storage_dir.mkdir(parents=True, exist_ok=overwrite)
