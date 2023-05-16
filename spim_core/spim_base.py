@@ -127,7 +127,7 @@ class Spim:
         date_time_string = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         if self.cfg.local_storage_dir is not None:
             self.cache_storage_dir = \
-                self.cfg.local_storage_dir / Path(self.cfg.subject_id + "_" + date_time_string)
+                self.cfg.local_storage_dir / Path(spim_name + "_" + self.cfg.subject_id + "_" + date_time_string)
             if self.cache_storage_dir.exists() and not overwrite:
                 self.log.error(f"Local folder {self.cache_storage_dir.absolute()} exists. "
                                "This function must be rerun with overwrite=True.")
@@ -137,7 +137,7 @@ class Spim:
         output_folder = None
         if self.cfg.ext_storage_dir is not None:
             output_folder = \
-                self.cfg.ext_storage_dir / Path(self.cfg.subject_id + "_" + date_time_string)
+                self.cfg.ext_storage_dir / Path(spim_name + "_" + self.cfg.subject_id + "_" + date_time_string)
             if output_folder.exists() and not overwrite:
                 self.log.error(f"Output folder {output_folder.absolute()} exists. "
                                "This function must be rerun with overwrite=True.")
