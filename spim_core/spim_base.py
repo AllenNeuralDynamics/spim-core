@@ -192,6 +192,26 @@ class Spim:
         zsteps = ceil((volume_z_um - z_step_size_um) / z_step_size_um)
         return 1 + xsteps, 1 + ysteps, 1 + zsteps
 
+    def get_image_extents_voxels(self, tile_overlap_x_percent: float,
+                                 tile_overlap_y_percent: float,
+                                 z_step_size_um: float,
+                                 volume_x_um: float, volume_y_um: float,
+                                 volume_z_um: float):
+        """Get the actual volume size to be collected given the desired
+            input imaging parameters.
+        """
+        x_grid_step_um, y_grid_step_um = self.get_xy_grid_step(tile_overlap_x_percent,
+                                                               tile_overlap_y_percent)
+        x_tiles, y_tiles, z_tiles = self.get_tile_counts(
+            tile_overlap_x_percent, tile_overlap_y_percent,
+            z_step_size_um, volume_x_um, volume_y_um, volume_z_um)
+        x_voxels = x_grid_step_um / self.cfg.x_voxel_size_um\
+                   + (self.cfg.x_voxel_size_um * self.cfg.sensor_column_count)
+        y_voxels = y_grid_step_um / self.cfg.y_voxel_size_um\
+                   + (self.cfg.x_voxel_size_um * self.cfg.sensor_row_count)
+        z_voxels = self.img_count * self.pixel_z_size_um
+        return x_voxels, y_voxels, z_voxels
+
     def apply_config(self):
         """Apply the new state (all changes) present in the config object"""
         raise NotImplementedError
