@@ -226,7 +226,8 @@ class Spim:
         # folder.
         date_time_string = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         # Assume self.cfg.local_storage_dir exists if we passed sanity check.
-        top_folder_name = Path(self.cfg.subject_id + "-ID_" + date_time_string)
+        top_folder_name = Path(self.cfg.subject_id + "_" + date_time_string) if not self.cfg.instrument_type \
+            else Path(self.cfg.instrument_type + "_" + self.cfg.subject_id + "_" + date_time_string)
         # Create required local folder structure.
         local_storage_dir = self.cfg.local_storage_dir / top_folder_name
         if local_storage_dir.exists() and not overwrite:
@@ -234,8 +235,8 @@ class Spim:
                            "This function must be rerun with overwrite=True.")
             raise
         # Create cache subfolder.
-        self.cache_storage_dir = local_storage_dir / Path("micr/") if not self.cfg.design_specs.get('instrument_type', False) \
-            else local_storage_dir / Path(f"{self.cfg.design_specs['instrument_type']}/")
+        self.cache_storage_dir = local_storage_dir / Path("micr/") if not self.cfg.instrument_type \
+            else local_storage_dir / Path(f"{self.cfg.instrument_type}/")
         self.log.info(f"Creating cache dataset folder in: "
                       f"{self.cache_storage_dir.absolute()}")
         # Create required external folder structure.
@@ -249,13 +250,12 @@ class Spim:
             self.cache_storage_dir.mkdir(parents=True, exist_ok=overwrite)
             output_dir = self.cfg.ext_storage_dir / top_folder_name
             if output_dir.exists() and not overwrite:
-
                 self.log.error(f"Output folder {output_dir.absolute()} exists. "
                                "This function must be rerun with overwrite=True.")
                 raise
         self.log.info(f"Creating dataset folder in: {output_dir.absolute()}")
-        self.img_storage_dir = output_dir / Path("micr/") if not self.cfg.design_specs.get('instrument_type', False) \
-            else output_dir / Path(f"{self.cfg.design_specs['instrument_type']}/")
+        self.img_storage_dir = output_dir / Path("micr/") if not self.cfg.instrument_type \
+            else output_dir / Path(f"{self.cfg.instrument_type}/")
         self.deriv_storage_dir = output_dir / Path("derivatives/")
         self.img_storage_dir.mkdir(parents=True, exist_ok=overwrite)
         self.deriv_storage_dir.mkdir(parents=True, exist_ok=overwrite)

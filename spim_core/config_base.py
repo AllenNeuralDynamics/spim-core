@@ -220,6 +220,14 @@ class SpimConfig(Config):
         return [int(nm) for nm in self.cfg['channel_specs'].keys() if nm.isdigit()]
 
     @property
+    def instrument_type(self):
+        return self.imaging_specs['instrument_type']
+
+    @instrument_type.setter
+    def instrument_type(self, val: str):
+        self.imaging_specs['instrument_type'] = val
+        
+    @property
     def subject_id(self):
         return self.imaging_specs['subject_id']
 
